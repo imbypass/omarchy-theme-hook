@@ -5,6 +5,7 @@ gtk3_dir="$HOME/.config/gtk-3.0"
 gtk4_dir="$HOME/.config/gtk-4.0"
 gtk3_file="$gtk3_dir/gtk.css"
 gtk4_file="$gtk4_dir/gtk.css"
+light_mode_file="$HOME/.config/omarchy/current/theme/light.mode"
 
 create_dynamic_theme() {
     cat > "$output_file" << EOF
@@ -200,8 +201,11 @@ else
     cp "$output_file" "$gtk4_file"
 fi
 
-gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
-gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
+if [ -f "$light_mode_file" ]; then
+  # Only force light-style GTK when theme explicitly declares light.mode
+  gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
+  gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
+fi
 
 require_restart "nautilus"
 success "GTK theme updated!"

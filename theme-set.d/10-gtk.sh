@@ -202,9 +202,15 @@ else
 fi
 
 if [ -f "$light_mode_file" ]; then
-  # Only force light-style GTK when theme explicitly declares light.mode
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
   gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
   gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
+fi
+
+if [ ! -f "$light_mode_file" ]; then
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+  gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
+  gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-dark
 fi
 
 require_restart "nautilus"

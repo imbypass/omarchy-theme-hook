@@ -41,6 +41,7 @@ theme-hook-update
 - Hyprland
 - Kitty
 - Mako
+- Nwg-dock-hyprland
 - QT6
 - Spotify
 - Steam

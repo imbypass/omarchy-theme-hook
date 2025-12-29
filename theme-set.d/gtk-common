@@ -7,7 +7,7 @@ gtk3_file="$gtk3_dir/gtk.css"
 gtk4_file="$gtk4_dir/gtk.css"
 
 create_dynamic_theme() {
-    cat > "$output_file" << EOF
+    cat > "$output_file" << EOF_THEME
     @define-color background     #${primary_background};
     @define-color foreground     #${primary_foreground};
     @define-color black          #${primary_background};
@@ -174,35 +174,5 @@ create_dynamic_theme() {
         filter: invert(79%) sepia(18%) saturate(611%) hue-rotate(192deg)
             brightness(103%) contrast(94%);
     }
-EOF
+EOF_THEME
 }
-
-if [ ! -d "$gtk3_dir" ]; then
-    mkdir -p "$gtk3_dir"
-fi
-if [ ! -d "$gtk4_dir" ]; then
-    mkdir -p "$gtk4_dir"
-fi
-
-if [ -f "$output_file" ]; then
-    if [ ! -f "$gtk3_dir/gtk.css.backup" ]; then
-        cp "$gtk3_file" "$gtk3_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk3_file"
-
-    if [ ! -f "$gtk4_dir/gtk.css.backup" ]; then
-        cp "$gtk4_file" "$gtk4_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk4_file"
-else
-    create_dynamic_theme
-    cp "$output_file" "$gtk3_file"
-    cp "$output_file" "$gtk4_file"
-fi
-
-gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
-gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
-
-require_restart "nautilus"
-success "GTK theme updated!"
-exit 0

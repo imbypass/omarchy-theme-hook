@@ -123,11 +123,65 @@ export rgb_primary_foreground rgb_primary_background
 export rgb_normal_black rgb_normal_red rgb_normal_green rgb_normal_yellow rgb_normal_blue rgb_normal_magenta rgb_normal_cyan rgb_normal_white
 export rgb_bright_black rgb_bright_red rgb_bright_green rgb_bright_yellow rgb_bright_blue rgb_bright_magenta rgb_bright_cyan rgb_bright_white
 
+status_line_regex='\[(SUCCESS|SKIPPED|WARNING|ERROR)\]'
+filter_status_lines() {
+    grep -E "$status_line_regex" || true
+}
+
+hook_success_message() {
+    case "$1" in
+        00-fish.sh) echo "fish colors updated!" ;;
+        00-fzf.sh) echo "fzf colors updated!" ;;
+        10-alacritty.sh) echo "Alacritty theme updated!" ;;
+        10-discord.sh) echo "Discord theme updated!" ;;
+        10-ghostty.sh) echo "Ghostty theme updated!" ;;
+        10-gtk3.sh|10-gtk4.sh) echo "GTK theme updated!" ;;
+        10-hyprland.sh) echo "Hyprland theme updated!" ;;
+        10-kitty.sh) echo "Kitty theme updated!" ;;
+        10-mako.sh) echo "Mako theme updated!" ;;
+        10-qt6ct.sh) echo "Qt6 theme updated!" ;;
+        10-spotify.sh) echo "Spotify theme updated!" ;;
+        10-superfile.sh) echo "Superfile theme updated!" ;;
+        10-swayosd.sh) echo "SwayOSD theme updated!" ;;
+        10-vicinae.sh) echo "Vicinae theme updated!" ;;
+        10-walker.sh) echo "Walker theme updated!" ;;
+        10-waybar.sh) echo "Waybar theme updated!" ;;
+        20-nwg-dock-hyprland.sh) echo "Dock theme updated!" ;;
+        20-swaync.sh) echo "SwayNC theme updated!" ;;
+        20-zed.sh) echo "Zed theme updated!" ;;
+        30-cursor.sh) echo "Cursor theme updated!" ;;
+        30-vscode.sh) echo "VS Code" ;;
+        30-windsurf.sh) echo "Windsurf theme updated!" ;;
+        40-cava.sh) echo "Cava theme updated!" ;;
+        40-chromium.sh) echo "Chromium theme updated!" ;;
+        40-firefox.sh) echo "Firefox theme updated!" ;;
+        40-steam.sh) echo "Steam theme updated!" ;;
+        40-zen.sh) echo "Zen Browser theme updated!" ;;
+        *) echo "${1%.sh} theme updated!" ;;
+    esac
+}
+
 if [[ -d ~/.config/omarchy/hooks/theme-set.d ]]; then
     for hook in ~/.config/omarchy/hooks/theme-set.d/*.sh; do
         if [[ -f "$hook" && -x "$hook" ]]; then
-            if ! "$hook" "$@"; then
-                error "Hook $(basename "$hook") failed!" >&2
+            hook_output="$("$hook" "$@" 2>&1)"
+            hook_status=$?
+            hook_base="$(basename "$hook")"
+            hook_message="$(hook_success_message "$hook_base")"
+
+            if [[ -n "$hook_output" ]]; then
+                filtered_output="$(printf '%s\n' "$hook_output" | filter_status_lines)"
+                if [[ -n "$filtered_output" ]]; then
+                    printf '%s\n' "$filtered_output"
+                elif [[ $hook_status -eq 0 ]]; then
+                    success "$hook_message"
+                fi
+            elif [[ $hook_status -eq 0 ]]; then
+                success "$hook_message"
+            fi
+
+            if [[ $hook_status -ne 0 ]]; then
+                error "Hook $hook_base failed!" >&2
             fi
         fi
     done
@@ -139,7 +193,6 @@ if [[ -d ~/.config/omarchy/hooks/theme-set.d ]]; then
     if [[ ${#restart_scripts[@]} -gt 0 ]]; then
         running=()
         for app in "${restart_scripts[@]}"; do
-            echo $app
             if pgrep -x "$app" > /dev/null; then
                 running+=("${app^}")
             fi

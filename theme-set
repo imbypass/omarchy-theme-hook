@@ -139,7 +139,6 @@ if [[ -d ~/.config/omarchy/hooks/theme-set.d ]]; then
     if [[ ${#restart_scripts[@]} -gt 0 ]]; then
         running=()
         for app in "${restart_scripts[@]}"; do
-            echo $app
             if pgrep -x "$app" > /dev/null; then
                 running+=("${app^}")
             fi

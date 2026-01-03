@@ -202,6 +202,7 @@ fi
 
 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
+pkill -f xdg-desktop-portal-gtk
 
 require_restart "nautilus"
 success "GTK theme updated!"

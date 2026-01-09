@@ -3,7 +3,7 @@
 new_zed_file="$HOME/.config/omarchy/current/theme/zed.json"
 
 create_dynamic_theme() {
-    cat > "$new_zed_file" << EOF
+cat > "$new_zed_file" << EOF
     {
       "\$schema": "https://zed.dev/schema/themes/v0.1.0.json",
       "name": "Omarchyy",

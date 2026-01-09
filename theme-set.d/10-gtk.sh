@@ -7,7 +7,7 @@ gtk3_file="$gtk3_dir/gtk.css"
 gtk4_file="$gtk4_dir/gtk.css"
 
 create_dynamic_theme() {
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
     @define-color background     #${primary_background};
     @define-color foreground     #${primary_foreground};
     @define-color black          #${primary_background};

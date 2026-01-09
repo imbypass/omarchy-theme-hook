@@ -2,8 +2,7 @@
 
 output_file="$HOME/.config/omarchy/current/theme/alacritty.toml"
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 [window]
 opacity = 0.9
 
@@ -34,4 +33,3 @@ magenta     = "#${bright_magenta}"
 cyan        = "#${bright_cyan}"
 white       = "#${bright_white}"
 EOF
-fi

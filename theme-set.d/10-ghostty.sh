@@ -2,11 +2,13 @@
 
 output_file="$HOME/.config/omarchy/current/theme/ghostty.conf"
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 font-family = "$(omarchy-font-current)"
 background = #${primary_background}
 foreground = #${primary_foreground}
+cursor-color = #${cursor_color}
+selection-background = #${selection_background}
+selection-foreground = #${selection_foreground}
 
 palette = 0=#${normal_black}
 palette = 1=#${normal_red}
@@ -26,4 +28,3 @@ palette = 13=#${bright_magenta}
 palette = 14=#${bright_cyan}
 palette = 15=#${bright_white}
 EOF
-fi

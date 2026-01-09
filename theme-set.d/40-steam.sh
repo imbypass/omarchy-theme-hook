@@ -10,8 +10,7 @@ if ! command -v python >/dev/null 2>&1; then
     skipped "Python 3"
 fi
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 :root {
     /* The main accent color and the matching text value */
     --adw-accent-bg-rgb: ${rgb_normal_blue} !important;
@@ -92,7 +91,6 @@ if [[ ! -f "$output_file" ]]; then
     --adw-shade-a: 0.36 !important;
 }
 EOF
-fi
 
 adwaita_location=$HOME/.local/share/steam-adwaita
 font_path=$(fc-list $(omarchy-font-current) file | grep -ioP '.*\.ttf' | head -n 1)

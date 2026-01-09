@@ -6,8 +6,7 @@ if ! command -v fish >/dev/null 2>&1; then
     skipped "Fish - FZF"
 fi
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 set -l color00 '#${normal_black}'
 set -l color01 '#${normal_red}'
 set -l color02 '#${normal_green}'
@@ -38,7 +37,6 @@ set -Ux FZF_DEFAULT_OPTS "\$FZF_NON_COLOR_OPTS"\
 " --color=fg:\$color07,header:\$color0D,info:\$color0A,pointer:\$color0E"\
 " --color=marker:\$color0E,fg+:\$color06,prompt:\$color0A,hl+:\$color0D"
 EOF
-fi
 
 fish source "$output_file"
 success "fzf colors updated!"

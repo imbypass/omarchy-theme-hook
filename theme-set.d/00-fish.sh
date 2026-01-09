@@ -6,8 +6,7 @@ if ! command -v fish >/dev/null 2>&1; then
     skipped "Fish - Colors"
 fi
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 set -U background '#${primary_background}'
 set -U foreground '#${primary_foreground}'
 set -U cursor '#${primary_foreground}'
@@ -36,7 +35,6 @@ set -U fish_pager_color_description \$fish_color_quote yellow
 set -U fish_pager_color_progress brwhite --background=cyan
 set -U fish_color_history_current --bold
 EOF
-fi
 
 fish source "$output_file"
 success "fish colors updated!"

@@ -7,8 +7,7 @@ if ! command -v nwg-dock-hyprland >/dev/null 2>&1; then
     skipped "NWG Dock"
 fi
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 window {
     background: #${primary_background}; /* base01 */
     border-color: #${bright_black}; /* base02 */
@@ -29,12 +28,11 @@ button:hover {
     background-color: rgba($rgb_bright_black, 0.5); /* base02 */
 }
 EOF
-fi
 
 mkdir -p "$HOME/.config/nwg-dock-hyprland"
 style_file="$HOME/.config/nwg-dock-hyprland/style.css"
 if [[ ! -f $style_file ]]; then
-    cat > $style_file << EOF
+cat > $style_file << EOF
 @import url("./colors.css");
 
 window {

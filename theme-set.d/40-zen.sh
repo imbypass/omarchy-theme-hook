@@ -31,8 +31,7 @@ enable_userchrome
 
 mkdir -p "$default_profile/chrome"
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 :root {
 --color00: #${primary_background};
 --color01: #${primary_background};
@@ -52,11 +51,10 @@ if [[ ! -f "$output_file" ]]; then
 --color0F: #${bright_red};
 }
 EOF
-fi
 cp "$output_file" "$default_profile/chrome/colors.css"
 
 if [[ ! -f "$default_profile/chrome/userChrome.css" ]]; then
-    cat > "$default_profile/chrome/userChrome.css" << EOF
+cat > "$default_profile/chrome/userChrome.css" << EOF
 @import url("./colors.css");
 
 :root {
@@ -238,7 +236,7 @@ EOF
 fi
 
 if [[ ! -f "$default_profile/chrome/userContent.css" ]]; then
-    cat > "$default_profile/chrome/userContent.css" <<EOF
+cat > "$default_profile/chrome/userContent.css" <<EOF
 @import url("./colors.css");
 
 :root {

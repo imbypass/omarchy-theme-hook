@@ -1,17 +1,17 @@
 #!/bin/bash
 
-input_file="$HOME/.config/omarchy/current/theme/alacritty.toml"
+# Omarchy 3.3+ uses colors.toml as the source of truth for theme colors.
+# Previously we read from alacritty.toml, but that file is now generated
+# from templates and may contain unrendered {{ placeholders }}.
+input_file="$HOME/.config/omarchy/current/theme/colors.toml"
 
-extract_from_section() {
-    local section="$1"
-    local color_name="$2"
-    awk -v section="[$section]" -v color="$color_name" '
-        $0 == section { in_section=1; next }
-        /^\[/ { in_section=0 }
-        in_section && $1 == color {
-            if (match($0, /(#|0x)([0-9a-fA-F]{6})/)) {
-                hex_part = substr($0, RSTART + (substr($0, RSTART, 2) == "0x" ? 2 : 1), 6)
-                print hex_part
+# Extract color value from colors.toml (flat key=value format)
+extract_color() {
+    local color_name="$1"
+    awk -v color="$color_name" '
+        $1 == color && /=/ {
+            if (match($0, /#([0-9a-fA-F]{6})/)) {
+                print substr($0, RSTART + 1, 6)
                 exit
             }
         }
@@ -77,26 +77,30 @@ require_restart() {
 
 export -f rgb2hex hex2rgb change_shade require_restart
 
-primary_foreground=$(extract_from_section "colors.primary" "foreground")
-primary_background=$(extract_from_section "colors.primary" "background")
-normal_black=$(extract_from_section "colors.normal" "black")
-normal_red=$(extract_from_section "colors.normal" "red")
-normal_green=$(extract_from_section "colors.normal" "green")
-normal_yellow=$(extract_from_section "colors.normal" "yellow")
-normal_blue=$(extract_from_section "colors.normal" "blue")
-normal_magenta=$(extract_from_section "colors.normal" "magenta")
-normal_cyan=$(extract_from_section "colors.normal" "cyan")
-normal_white=$(extract_from_section "colors.normal" "white")
-bright_black=$(extract_from_section "colors.bright" "black")
-bright_red=$(extract_from_section "colors.bright" "red")
-bright_green=$(extract_from_section "colors.bright" "green")
-bright_yellow=$(extract_from_section "colors.bright" "yellow")
-bright_blue=$(extract_from_section "colors.bright" "blue")
-bright_magenta=$(extract_from_section "colors.bright" "magenta")
-bright_cyan=$(extract_from_section "colors.bright" "cyan")
-bright_white=$(extract_from_section "colors.bright" "white")
+# Extract colors from colors.toml (Omarchy 3.3+ format)
+primary_foreground=$(extract_color "foreground")
+primary_background=$(extract_color "background")
+cursor_color=$(extract_color "cursor")
+selection_foreground=$(extract_color "selection_foreground")
+selection_background=$(extract_color "selection_background")
+normal_black=$(extract_color "color0")
+normal_red=$(extract_color "color1")
+normal_green=$(extract_color "color2")
+normal_yellow=$(extract_color "color3")
+normal_blue=$(extract_color "color4")
+normal_magenta=$(extract_color "color5")
+normal_cyan=$(extract_color "color6")
+normal_white=$(extract_color "color7")
+bright_black=$(extract_color "color8")
+bright_red=$(extract_color "color9")
+bright_green=$(extract_color "color10")
+bright_yellow=$(extract_color "color11")
+bright_blue=$(extract_color "color12")
+bright_magenta=$(extract_color "color13")
+bright_cyan=$(extract_color "color14")
+bright_white=$(extract_color "color15")
 
-export primary_background primary_foreground
+export primary_background primary_foreground cursor_color selection_foreground selection_background
 export normal_black normal_red normal_green normal_yellow normal_blue normal_magenta normal_cyan normal_white
 export bright_black bright_red bright_green bright_yellow bright_blue bright_magenta bright_cyan bright_white
 

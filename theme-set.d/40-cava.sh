@@ -7,7 +7,7 @@ fi
 theme_template="$HOME/.config/omarchy/current/theme/cava_theme"
 
 if [ ! -f "$theme_template" ]; then
-    cat > "$theme_template" << EOF
+cat > "$theme_template" << EOF
 [color]
 gradient = 1
 gradient_count = 8

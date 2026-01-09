@@ -24,7 +24,7 @@ base0E=$normal_magenta
 base0F=$bright_red
 
 if [ ! -f "$new_qt_file" ]; then
-    cat > "$new_qt_file" << EOF
+cat > "$new_qt_file" << EOF
 [ColorScheme]
 active_colors=#ff${base05}, #ff${base01}, #ff${base01}, #ff${base05}, #ff${base03}, #ff${base04}, #ff${base05}, #ff${base06}, #ff${base05}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base05}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base05}, #ff${base01}, #ff${base05}, #8f${base05}
 disabled_colors=#ff${base00}, #ff${base01}, #ff${base01}, #ff${base04}, #ff${base03}, #ff${base04}, #ff${base00}, #ff${base00}, #ff${base00}, #ff${base01}, #ff${base00}, #ff${base03}, #ff${base02}, #ff${base04}, #ff${base09}, #ff${base08}, #ff${base02}, #ff${base04}, #ff${base01}, #ff${base00}, #8f${base00}

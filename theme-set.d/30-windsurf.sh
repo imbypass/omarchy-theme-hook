@@ -6,8 +6,7 @@ if ! command -v windsurf >/dev/null 2>&1; then
     skipped "Windsurf"
 fi
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 {
     "\$schema": "vscode://schemas/color-theme",
     "name": "Omarchy",
@@ -1242,7 +1241,6 @@ if [[ ! -f "$output_file" ]]; then
     ]
 }
 EOF
-fi
 
 extension_name="tintedtheming.base16-tinted-themes"
 

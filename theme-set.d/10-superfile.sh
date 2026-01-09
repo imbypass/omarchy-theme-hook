@@ -7,7 +7,7 @@ if ! command -v spf >/dev/null 2>&1; then
 fi
 
 if [ ! -f "$output_file" ]; then
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
 
 # ========= Border =========
 file_panel_border = '#${normal_white}'

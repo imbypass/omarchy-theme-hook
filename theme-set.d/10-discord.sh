@@ -14,7 +14,7 @@ possible_paths=(
 
 create_dynamic_theme() {
 
-    cat > "$output_file" << EOF
+cat > "$output_file" << EOF
     /**
     * @name Omarchy
     * @author @bypass_

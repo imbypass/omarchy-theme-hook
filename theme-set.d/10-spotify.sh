@@ -2,7 +2,7 @@
 
 create_spicetify_styling() {
     mkdir -p "$HOME/.config/spicetify/Themes/omarchy"
-    cat > "$HOME/.config/spicetify/Themes/omarchy/user.css" << EOF
+cat > "$HOME/.config/spicetify/Themes/omarchy/user.css" << EOF
 :root,
 .encore-dark-theme,
 .encore-base-set,
@@ -54,7 +54,7 @@ create_dynamic_theme() {
     color0E=${normal_magenta}
     color0F=${bright_red}
 
-    cat > "$HOME/.config/spicetify/Themes/omarchy/color.ini" << EOF
+cat > "$HOME/.config/spicetify/Themes/omarchy/color.ini" << EOF
 [base]
 main                = ${color00}
 player              = ${color00}

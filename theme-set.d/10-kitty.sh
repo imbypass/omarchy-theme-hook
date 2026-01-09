@@ -2,8 +2,7 @@
 
 output_file="$HOME/.config/omarchy/current/theme/kitty.conf"
 
-if [[ ! -f "$output_file" ]]; then
-    cat > "$output_file" <<EOF
+cat > "$output_file" <<EOF
 background            #${primary_background}
 foreground            #${primary_foreground}
 
@@ -24,4 +23,3 @@ color13 #${bright_magenta}
 color14 #${bright_cyan}
 color15 #${bright_white}
 EOF
-fi

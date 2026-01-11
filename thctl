@@ -171,9 +171,20 @@ post_disable() {
     esac
 }
 
+help() {
+    echo -e "Usage: thctl [command] [theme]"
+    echo
+    echo -e "Commands:"
+    echo -e "$(dot "muted")  list       List all available themes"
+    echo -e "$(dot "muted")  enable     Enable a theme"
+    echo -e "$(dot "muted")  disable    Disable a theme"
+    echo -e "$(dot "muted")  help       Show this help message"
+}
+
 case $1 in
     list) get_hook_list ;;
     enable) enable_hooks "$@" ;;
     disable) disable_hooks "$@" ;;
-    *) return 0 ;;
+    help) help ;;
+    *) help; exit 0 ;;
 esac

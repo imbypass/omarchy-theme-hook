@@ -177,26 +177,53 @@ post_disable() {
     esac
 }
 
-help() {
+th_install() {
+    curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
+}
+
+th_uninstall() {
+    curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
+}
+
+th_help() {
     echo -e "Usage: thctl [command] [theme]"
     echo
     echo -e "Commands:"
+    echo -e "$(dot "muted")  help       Show this help message"
     echo -e "$(dot "muted")  enable     Enable a theme"
     echo -e "$(dot "muted")  disable    Disable a theme"
     echo -e "$(dot "muted")  list       List all available themes"
     echo -e "$(dot "muted")  open       Open the hooks directory"
-    echo -e "$(dot "muted")  help       Show this help message"
+    echo -e "$(dot "muted")  update     Update the theme hook"
+    echo -e "$(dot "muted")  uninstall  Uninstall the theme hook"
+
 }
 
 case $1 in
     open) open_hooks_dir ;;
+    dir) open_hooks_dir ;;
     o) open_hooks_dir ;;
+
     list) get_hook_list ;;
+    ls) get_hook_list ;;
     l) get_hook_list ;;
+
     enable) enable_hooks "$@" ;;
+    on) enable_hooks "$@" ;;
     e) enable_hooks "$@" ;;
+
     disable) disable_hooks "$@" ;;
+    off) disable_hooks "$@" ;;
     d) disable_hooks "$@" ;;
-    help) help ;;
-    *) help; exit 0 ;;
+
+    update) th_install ;;
+    up) th_install ;;
+    u) th_install ;;
+
+    remove) th_uninstall ;;
+    rm) th_uninstall ;;
+    r) th_uninstall ;;
+
+    help) th_help ;;
+    *) th_help; exit 0 ;;
 esac

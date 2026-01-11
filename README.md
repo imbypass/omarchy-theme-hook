@@ -24,7 +24,7 @@ curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
 ```
 
 ## Updating
-You can update the theme hook by running the following command:
+You can update the theme hook by running the following command, or by re-running the installation script:
 ```
 thctl update
 ```
@@ -53,7 +53,7 @@ You can access it via the terminal by running `thctl`.
 ## Uninstalling
 You can remove the theme hook by running the following command:
 ```
-thctl uninstall
+curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
 ```
 
 ## FAQ

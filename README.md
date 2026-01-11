@@ -26,10 +26,10 @@ curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
 ## Updating
 You can update the theme hook by running the following command:
 ```
-theme-hook-update
+thctl update
 ```
 
-## Theme Hook Controller `thctl`
+## Theme Hook Controller (`thctl`)
 The Theme Hook Controller (`thctl`) is a command-line tool that allows you to manage your Theme Hook installation. It provides a simple interface for updating the hook as well as toggling hooklettes on and off.
 You can access it via the terminal by running `thctl`.
 

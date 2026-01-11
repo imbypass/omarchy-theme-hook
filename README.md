@@ -53,7 +53,7 @@ You can access it via the terminal by running `thctl`.
 ## Uninstalling
 You can remove the theme hook by running the following command:
 ```
-curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
+thctl uninstall
 ```
 
 ## FAQ

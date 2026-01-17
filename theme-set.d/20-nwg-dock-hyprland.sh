@@ -46,6 +46,8 @@ if [[ -d "$hypr_config_dir" ]]; then
 fi
 
 if [[ ! -f "$output_file" ]]; then
+  mkdir -p "$(dirname "$output_file")"
+
   cat >"$output_file" <<EOF
 window {
     background: #${primary_background}; /* base01 */
@@ -103,6 +105,7 @@ button:focus {
     box-shadow: none;
 }
 EOF
+  fi
 fi
 
 cp "$output_file" "$HOME/.config/nwg-dock-hyprland/colors.css"

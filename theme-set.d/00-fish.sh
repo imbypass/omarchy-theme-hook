@@ -36,5 +36,5 @@ set -U fish_pager_color_progress brwhite --background=cyan
 set -U fish_color_history_current --bold
 EOF
 
-fish source "$output_file"
+fish -c "source $output_file"
 success "fish colors updated!"

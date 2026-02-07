@@ -38,5 +38,5 @@ set -Ux FZF_DEFAULT_OPTS "\$FZF_NON_COLOR_OPTS"\
 " --color=marker:\$color0E,fg+:\$color06,prompt:\$color0A,hl+:\$color0D"
 EOF
 
-fish source "$output_file"
+fish -c "source $output_file"
 success "fzf colors updated!"

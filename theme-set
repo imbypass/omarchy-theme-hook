@@ -5,6 +5,10 @@
 # from templates and may contain unrendered {{ placeholders }}.
 input_file="$HOME/.config/omarchy/current/theme/colors.toml"
 
+if [[ ! -f "$input_file" ]]; then
+    error "colors.toml not found at $input_file. Ensure your theme is compatible with Omarchy 3.3+ and includes colors.toml."
+fi
+
 # Extract color value from colors.toml (flat key=value format)
 extract_color() {
     local color_name="$1"

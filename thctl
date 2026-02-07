@@ -177,6 +177,10 @@ post_disable() {
     esac
 }
 
+th_run() {
+    omarchy-hook "theme-set"
+}
+
 th_install() {
     curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
 }
@@ -194,6 +198,7 @@ th_help() {
     echo -e "$(dot "muted")  disable    Disable a hooklette"
     echo -e "$(dot "muted")  list       List all available hooklettes"
     echo -e "$(dot "muted")  open       Open the hooklettes directory"
+    echo -e "$(dot "muted")  run        Run/execute the theme hook"
     echo -e "$(dot "muted")  update     Update the theme hook"
     echo -e "$(dot "muted")  uninstall  Uninstall the theme hook"
 
@@ -218,11 +223,12 @@ case $1 in
 
     update) th_install ;;
     up) th_install ;;
-    u) th_install ;;
 
     remove) th_uninstall ;;
     rm) th_uninstall ;;
-    r) th_uninstall ;;
+
+    run) th_run ;;
+    r) th_run ;;
 
     help) th_help ;;
     *) th_help; exit 0 ;;

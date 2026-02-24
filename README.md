@@ -79,6 +79,9 @@ curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
 #### My Spotify stopped theming!
 A Spotify client update may have caused Spicetify to stop working. You can fix this either by running `spicetify restore backup apply` or by reinstalling Spotify and Spicetify, and running `spicetify backup apply`.
 
+#### I get a "colors.toml not found" error!
+Omarchy 3.3+ requires themes to include `colors.toml`. Update your theme to a version compatible with Omarchy 3.3+, or add a valid `colors.toml` file to the theme directory.
+
 #### What if I encounter issues?
 If you encounter any issues, please open an issue on the GitHub repository.
 

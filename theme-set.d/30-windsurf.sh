@@ -1,7 +1,7 @@
 #!/bin/bash
 output_file="$HOME/.config/omarchy/current/theme/vscode_colors.json"
 
-if ! command -v code >/dev/null 2>&1; then
+if ! command -v windsurf >/dev/null 2>&1; then
     skipped "Windsurf"
 fi
 

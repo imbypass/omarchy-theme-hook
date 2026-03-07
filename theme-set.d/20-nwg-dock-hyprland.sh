@@ -50,23 +50,21 @@ if [[ ! -f "$output_file" ]]; then
 
   cat >"$output_file" <<EOF
 window {
-    background: #${primary_background}; /* base01 */
-    border-color: #${bright_black}; /* base02 */
-    border: 2px solid #${bright_black};
+    background: #${primary_background};
+    border-color: #${bright_black};
 }
 
 button,
 image {
-    color: #${bright_white}; /* base07 */
+    color: #${bright_white};
 }
 
 button {
-    color: #${normal_white}; /* base05 */
-    padding: 3px;
+    color: #${normal_white};
 }
 
 button:hover {
-    background-color: rgba($rgb_bright_black, 0.5); /* base02 */
+    background-color: rgba($rgb_bright_black, 0.5);
 }
 EOF
 
@@ -83,6 +81,9 @@ window {
 }
 
 #box {
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 12px;
     padding: 6px;
 }
 

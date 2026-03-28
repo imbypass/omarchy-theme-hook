@@ -26,6 +26,16 @@ fi
 # Remove GTK theme
 gsettings set org.gnome.desktop.interface gtk-theme Adwaita > /dev/null 2>&1
 
+# Remove Qutebrowser theme
+if command -v qutebrowser >/dev/null 2>&1; then
+    rm -rf "$HOME/.config/qutebrowser/omarchy"
+    config_file="$HOME/.config/qutebrowser/config.py"
+    if [[ -f "$config_file" ]]; then
+        sed -i '/import omarchy\.draw/d' "$config_file"
+        sed -i '/omarchy\.draw\.apply(c)/d' "$config_file"
+    fi
+fi
+
 # Remove Vicinae theme
 if command -v vicinae >/dev/null 2>&1; then
     vicinae theme set vicinae-dark > /dev/null 2>&1

@@ -6,7 +6,13 @@ if ! command -v vicinae >/dev/null 2>&1; then
     skipped "Vicinae"
 fi
 
-if [ ! -f "$output_file" ]; then
+# theme-set runs every theme-set.d/*.sh script twice: once through the
+# theme-set wrapper (which exports these color vars) and once directly
+# without them (see omarchy-hook). Only (re)generate when we actually have
+# color data, so the var-less second pass doesn't clobber the good output
+# with empty colors, and so every theme switch regenerates instead of only
+# the very first run.
+if [ -n "$primary_background" ]; then
 cat > "$output_file" << EOF
 [meta]
 version = 1

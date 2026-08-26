@@ -185,20 +185,23 @@ if [ ! -d "$gtk4_dir" ]; then
     mkdir -p "$gtk4_dir"
 fi
 
-if [ -f "$output_file" ]; then
-    if [ ! -f "$gtk3_dir/gtk.css.backup" ]; then
-        cp "$gtk3_file" "$gtk3_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk3_file"
+if [ ! -f "$gtk3_dir/gtk.css.backup" ] && [ -f "$gtk3_file" ]; then
+    cp "$gtk3_file" "$gtk3_dir/gtk.css.backup"
+fi
+if [ ! -f "$gtk4_dir/gtk.css.backup" ] && [ -f "$gtk4_file" ]; then
+    cp "$gtk4_file" "$gtk4_dir/gtk.css.backup"
+fi
 
-    if [ ! -f "$gtk4_dir/gtk.css.backup" ]; then
-        cp "$gtk4_file" "$gtk4_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk4_file"
-else
+# theme-set runs every theme-set.d/*.sh script twice: once through the
+# theme-set wrapper (which exports these color vars) and once directly
+# without them (see omarchy-hook). Only (re)generate when we actually have
+# color data, so the var-less second pass doesn't clobber the good output
+# with empty colors, and so every theme switch regenerates instead of only
+# the very first run.
+if [ -n "$primary_background" ]; then
     create_dynamic_theme
-    cp "$output_file" "$gtk3_file"
-    cp "$output_file" "$gtk4_file"
+    cp -f "$output_file" "$gtk3_file"
+    cp -f "$output_file" "$gtk4_file"
 fi
 
 if [ -f "$light_file" ]; then

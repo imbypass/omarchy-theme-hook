@@ -20,7 +20,7 @@ The Omarchy Theme Hook is a lightweight, clean solution to extending your Omarch
 ## Installing
 You can install the theme hook by running the following command:
 ```
-curl -fsSL https://raw.githubusercontent.com/Redzselek/omarchy-theme-hook/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/install.sh | bash
 ```
 
 ## Updating
@@ -53,7 +53,7 @@ You can access it via the terminal by running `thctl`.
 ## Uninstalling
 You can remove the theme hook by running the following command:
 ```
-curl -fsSL https://raw.githubusercontent.com/Redzselek/omarchy-theme-hook/main/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/uninstall.sh | bash
 ```
 
 ## FAQ

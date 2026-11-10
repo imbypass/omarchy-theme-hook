@@ -22,12 +22,18 @@ git clone https://github.com/imbypass/omarchy-theme-hook.git /tmp/theme-hook > /
 # Remove any old update alias
 rm -rf $HOME/.local/share/omarchy/bin/theme-hook-update > /dev/null 2>&1
 
-# Create a theme control alias
-mv -f /tmp/theme-hook/thctl $HOME/.local/share/omarchy/bin/thctl
-chmod +x $HOME/.local/share/omarchy/bin/thctl
+# Remove thctl from the Omarchy tree, which is moved aside by the Omarchy 4 upgrade
+rm -rf $HOME/.local/share/omarchy/bin/thctl > /dev/null 2>&1
 
-# Copy theme-set hook to Omarchy hooks directory
+# Create a theme control alias
+mkdir -p $HOME/.local/bin
+mv -f /tmp/theme-hook/thctl $HOME/.local/bin/thctl
+chmod +x $HOME/.local/bin/thctl
+
+# Copy the theme-set hook and its shared library to the Omarchy hooks directory
+mkdir -p $HOME/.config/omarchy/hooks/
 mv -f /tmp/theme-hook/theme-set $HOME/.config/omarchy/hooks/
+mv -f /tmp/theme-hook/theme-set.lib.sh $HOME/.config/omarchy/hooks/
 
 # Create theme hook directory and copy scripts
 mkdir -p $HOME/.config/omarchy/hooks/theme-set.d/

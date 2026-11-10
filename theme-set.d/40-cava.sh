@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
 if ! command -v cava >/dev/null 2>&1; then
     skipped "Cava"
 fi
 
-theme_template="$HOME/.config/omarchy/current/theme/cava_theme"
+theme_template="$omarchy_theme_dir/cava_theme"
 
 if [ ! -f "$theme_template" ]; then
 cat > "$theme_template" << EOF

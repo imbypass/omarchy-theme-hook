@@ -1,6 +1,8 @@
 #!/bin/bash
 
-new_qt_file="$HOME/.config/omarchy/current/theme/qt6ct.conf"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+new_qt_file="$omarchy_theme_dir/qt6ct.conf"
 
 if ! command -v qt6ct >/dev/null 2>&1; then
     skipped "Qt6ct"

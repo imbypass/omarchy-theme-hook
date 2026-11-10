@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
 if ! command -v qutebrowser >/dev/null 2>&1; then
     skipped "Qutebrowser"
 fi
@@ -8,7 +10,7 @@ config_dir="$HOME/.config/qutebrowser"
 theme_dir="$config_dir/omarchy"
 draw_file="$theme_dir/draw.py"
 config_file="$config_dir/config.py"
-light_file="$HOME/.config/omarchy/current/theme/light.mode"
+light_file="$omarchy_theme_dir/light.mode"
 
 # Determine light/dark mode
 if [ -f "$light_file" ]; then

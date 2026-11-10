@@ -22,6 +22,18 @@ dot() {
     esac
 }
 
+# Omarchy 4 keeps the current theme in ~/.local/state, Omarchy 3 in ~/.config.
+light_mode() {
+    local dir
+    for dir in "$HOME/.local/state/omarchy/current/theme" "$HOME/.config/omarchy/current/theme"; do
+        if [[ -f "$dir/colors.toml" ]]; then
+            [[ -f "$dir/light.mode" ]]
+            return
+        fi
+    done
+    return 1
+}
+
 open_hooks_dir() {
     if [[ -d ~/.config/omarchy/hooks/theme-set.d ]]; then
         xdg-open ~/.config/omarchy/hooks/theme-set.d & disown
@@ -109,7 +121,7 @@ post_enable() {
             echo -e "$(dot "muted")Please read the FAQ to disable Firefox theming."
         ;;
         "gtk")
-            if [ -f "$HOME/.config/omarchy/current/theme/light.mode" ]; then
+            if light_mode; then
                 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
                 gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3
             else
@@ -150,7 +162,7 @@ post_disable() {
             echo -e "$(dot "muted")Please read the FAQ to disable Firefox theming."
         ;;
         "gtk")
-            if [ -f "$HOME/.config/omarchy/current/theme/light.mode" ]; then
+            if light_mode; then
                 gsettings set org.gnome.desktop.interface gtk-theme Adwaita
             else
                 gsettings set org.gnome.desktop.interface gtk-theme Adwaita-dark
@@ -182,11 +194,11 @@ th_run() {
 }
 
 th_install() {
-    curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/install.sh | bash
 }
 
 th_uninstall() {
-    curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
+    curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/uninstall.sh | bash
 }
 
 th_help() {

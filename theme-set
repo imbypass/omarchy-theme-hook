@@ -1,162 +1,38 @@
 #!/bin/bash
 
-# Omarchy 3.3+ uses colors.toml as the source of truth for theme colors.
-# Previously we read from alacritty.toml, but that file is now generated
-# from templates and may contain unrendered {{ placeholders }}.
-input_file="$HOME/.config/omarchy/current/theme/colors.toml"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
 
-if [[ ! -f "$input_file" ]]; then
-    error "colors.toml not found at $input_file. Ensure your theme is compatible with Omarchy 3.3+ and includes colors.toml."
-fi
+hooks_dir="$HOME/.config/omarchy/hooks/theme-set.d"
 
-# Extract color value from colors.toml (flat key=value format)
-extract_color() {
-    local color_name="$1"
-    awk -v color="$color_name" '
-        $1 == color && /=/ {
-            if (match($0, /#([0-9a-fA-F]{6})/)) {
-                print substr($0, RSTART + 1, 6)
-                exit
-            }
-        }
-    ' "$input_file"
+# Omarchy 4's omarchy-hook runs theme-set and then every file in theme-set.d
+# itself. Dispatching the hooklettes here as well would run each of them twice,
+# so they are only dispatched when omarchy-hook did not (Omarchy 3), or when
+# theme-set was started by hand.
+omarchy_hook_dispatches_hooklettes() {
+    local hook_bin parent_cmdline
+    hook_bin=$(command -v omarchy-hook 2>/dev/null) || hook_bin="/usr/share/omarchy/bin/omarchy-hook"
+    [[ -r $hook_bin ]] || return 1
+    grep -q 'HOOK_DIR' "$hook_bin" || return 1
+
+    parent_cmdline=$(tr '\0' ' ' < "/proc/$PPID/cmdline" 2>/dev/null) || return 1
+    [[ $parent_cmdline == *omarchy-hook* ]]
 }
 
-success() {
-    echo -e "\e[32m[SUCCESS]\e[0m $1"
-}
-
-skipped() {
-    echo -e "\033[0;34m[SKIPPED]\e[0m $1 not found. Skipping.."
-    exit 0
-}
-
-warning() {
-    echo -e "\033[0;33m[WARNING]\e[0m $1"
-}
-
-error() {
-    echo -e "\e[31m[ERROR]\e[0m $1"
-    exit 1
-}
-
-export -f success warning error skipped
-
-hex2rgb() {
-    hex_input=$1
-    r=$((16#${hex_input:0:2}))
-    g=$((16#${hex_input:2:2}))
-    b=$((16#${hex_input:4:2}))
-    echo "$r, $g, $b"
-}
-
-rgb2hex() {
-    r=$1
-    g=$2
-    b=$3
-    printf "%02x%02x%02x" $r $g $b
-}
-
-change_shade() {
-    local hex_color=$1
-    local shade=$2
-    hex_input=$1
-    r=$((16#${hex_input:0:2}))
-    g=$((16#${hex_input:2:2}))
-    b=$((16#${hex_input:4:2}))
-
-    r=$((r + shade))
-    g=$((g + shade))
-    b=$((b + shade))
-
-    rgb2hex $r $g $b
-}
-
-restart_scripts=()
-restart_file=$(mktemp)
-export restart_file
-require_restart() {
-    echo "$1" >> "$restart_file"
-}
-
-export -f rgb2hex hex2rgb change_shade require_restart
-
-# Extract colors from colors.toml (Omarchy 3.3+ format)
-primary_foreground=$(extract_color "foreground")
-primary_background=$(extract_color "background")
-cursor_color=$(extract_color "cursor")
-selection_foreground=$(extract_color "selection_foreground")
-selection_background=$(extract_color "selection_background")
-normal_black=$(extract_color "color0")
-normal_red=$(extract_color "color1")
-normal_green=$(extract_color "color2")
-normal_yellow=$(extract_color "color3")
-normal_blue=$(extract_color "color4")
-normal_magenta=$(extract_color "color5")
-normal_cyan=$(extract_color "color6")
-normal_white=$(extract_color "color7")
-bright_black=$(extract_color "color8")
-bright_red=$(extract_color "color9")
-bright_green=$(extract_color "color10")
-bright_yellow=$(extract_color "color11")
-bright_blue=$(extract_color "color12")
-bright_magenta=$(extract_color "color13")
-bright_cyan=$(extract_color "color14")
-bright_white=$(extract_color "color15")
-
-export primary_background primary_foreground cursor_color selection_foreground selection_background
-export normal_black normal_red normal_green normal_yellow normal_blue normal_magenta normal_cyan normal_white
-export bright_black bright_red bright_green bright_yellow bright_blue bright_magenta bright_cyan bright_white
-
-rgb_primary_foreground=$(hex2rgb $primary_foreground)
-rgb_primary_background=$(hex2rgb $primary_background)
-rgb_normal_black=$(hex2rgb $normal_black)
-rgb_normal_red=$(hex2rgb $normal_red)
-rgb_normal_green=$(hex2rgb $normal_green)
-rgb_normal_yellow=$(hex2rgb $normal_yellow)
-rgb_normal_blue=$(hex2rgb $normal_blue)
-rgb_normal_magenta=$(hex2rgb $normal_magenta)
-rgb_normal_cyan=$(hex2rgb $normal_cyan)
-rgb_normal_white=$(hex2rgb $normal_white)
-rgb_bright_black=$(hex2rgb $bright_black)
-rgb_bright_red=$(hex2rgb $bright_red)
-rgb_bright_green=$(hex2rgb $bright_green)
-rgb_bright_yellow=$(hex2rgb $bright_yellow)
-rgb_bright_blue=$(hex2rgb $bright_blue)
-rgb_bright_magenta=$(hex2rgb $bright_magenta)
-rgb_bright_cyan=$(hex2rgb $bright_cyan)
-rgb_bright_white=$(hex2rgb $bright_white)
-
-export rgb_primary_foreground rgb_primary_background
-export rgb_normal_black rgb_normal_red rgb_normal_green rgb_normal_yellow rgb_normal_blue rgb_normal_magenta rgb_normal_cyan rgb_normal_white
-export rgb_bright_black rgb_bright_red rgb_bright_green rgb_bright_yellow rgb_bright_blue rgb_bright_magenta rgb_bright_cyan rgb_bright_white
-
-if [[ -d ~/.config/omarchy/hooks/theme-set.d ]]; then
-    for hook in ~/.config/omarchy/hooks/theme-set.d/*.sh; do
+run_hooklettes() {
+    local hook
+    for hook in "$hooks_dir"/*.sh; do
         if [[ -f "$hook" && -x "$hook" ]]; then
             if ! "$hook" "$@"; then
-                error "Hook $(basename "$hook") failed!" >&2
+                warning "Hook $(basename "$hook") failed!"
             fi
         fi
     done
+}
 
-    if [[ -f "$restart_file" ]]; then
-        mapfile -t restart_scripts < "$restart_file"
-        rm "$restart_file"
-    fi
-    if [[ ${#restart_scripts[@]} -gt 0 ]]; then
-        running=()
-        for app in "${restart_scripts[@]}"; do
-            if pgrep -x "$app" > /dev/null; then
-                running+=("${app^}")
-            fi
-        done
-        if [[ ${#running[@]} -gt 0 ]]; then
-            apps=""
-            for app in "${running[@]}"; do
-                apps+="- $app"$'\n'
-            done
-            notify-send "Omarchy Theme Hook" "The following apps require a restart to apply theme:\n\n$apps"
-        fi
-    fi
+# Start every run with an empty restart list; hooklettes append to it and
+# 99-restart.sh reports it once they have all run.
+: > "$restart_file"
+
+if [[ -d "$hooks_dir" ]] && ! omarchy_hook_dispatches_hooklettes; then
+    run_hooklettes "$@"
 fi

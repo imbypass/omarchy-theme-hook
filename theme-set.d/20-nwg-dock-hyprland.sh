@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
 # This script respects user's existing nwg-dock-hyprland configuration.
 # It searches ~/.config/hypr/*.conf for exec/exec-once commands and preserves user flags.
 # Falls back to default configuration only if no user command is found.
 
-output_file="$HOME/.config/omarchy/current/theme/nwg-dock.css"
+output_file="$omarchy_theme_dir/nwg-dock.css"
 default_dock_command="nwg-dock-hyprland -r -mb 10 -mt 10 -i 22 -x -nolauncher"
 
 if ! command -v nwg-dock-hyprland >/dev/null 2>&1; then

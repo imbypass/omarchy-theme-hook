@@ -1,6 +1,8 @@
 #!/bin/bash
 
-output_file="$HOME/.config/omarchy/current/theme/zen.css"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/zen.css"
 
 # Detect available Zen launcher command across variants
 zen_cmd=""
@@ -27,7 +29,7 @@ done
 
 # fallback in case colors aren't in the environment
 if [[ -z "$primary_background" ]]; then
-    _colors_file="$HOME/.config/omarchy/current/theme/colors.toml"
+    _colors_file="$omarchy_theme_dir/colors.toml"
     _ec() { awk -v c="$1" '$1==c&&/=/{if(match($0,/#([0-9a-fA-F]{6})/)){print substr($0,RSTART+1,6);exit}}' "$_colors_file"; }
     primary_background=$(_ec "background"); primary_foreground=$(_ec "foreground")
     normal_white=$(_ec "color7");   bright_white=$(_ec "color15")

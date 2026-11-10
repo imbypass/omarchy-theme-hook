@@ -1,6 +1,8 @@
 #!/bin/bash
 
-output_file="$HOME/.config/omarchy/current/theme/steam.css"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/steam.css"
 
 if ! command -v steam >/dev/null 2>&1; then
     skipped "Steam"

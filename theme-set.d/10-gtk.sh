@@ -1,14 +1,16 @@
 #!/bin/bash
 
-output_file="$HOME/.config/omarchy/current/theme/gtk.css"
-light_file="$HOME/.config/omarchy/current/theme/light.mode"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/gtk.css"
+light_file="$omarchy_theme_dir/light.mode"
 gtk3_dir="$HOME/.config/gtk-3.0"
 gtk4_dir="$HOME/.config/gtk-4.0"
 gtk3_file="$gtk3_dir/gtk.css"
 gtk4_file="$gtk4_dir/gtk.css"
 
 create_dynamic_theme() {
-cat > "$output_file" << EOF
+cat > "$output_file.tmp" << EOF
     @define-color background     #${primary_background};
     @define-color foreground     #${primary_foreground};
     @define-color black          #${primary_background};
@@ -185,23 +187,39 @@ if [ ! -d "$gtk4_dir" ]; then
     mkdir -p "$gtk4_dir"
 fi
 
-if [ -f "$output_file" ]; then
-    if [ ! -f "$gtk3_dir/gtk.css.backup" ]; then
-        cp "$gtk3_file" "$gtk3_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk3_file"
-
-    if [ ! -f "$gtk4_dir/gtk.css.backup" ]; then
-        cp "$gtk4_file" "$gtk4_dir/gtk.css.backup"
-    fi
-    cp -f "$output_file" "$gtk4_file"
-else
-    create_dynamic_theme
-    cp "$output_file" "$gtk3_file"
-    cp "$output_file" "$gtk4_file"
+# Preserve the pre-hook CSS once, before the first generation overwrites it.
+# This must happen on every run until a backup exists: the previously
+# generated file is never a source, so backing it up does not restore it.
+if [ ! -f "$gtk3_dir/gtk.css.backup" ] && [ -f "$gtk3_file" ]; then
+    cp "$gtk3_file" "$gtk3_dir/gtk.css.backup"
+fi
+if [ ! -f "$gtk4_dir/gtk.css.backup" ] && [ -f "$gtk4_file" ]; then
+    cp "$gtk4_file" "$gtk4_dir/gtk.css.backup"
 fi
 
+# Regenerate on every run from colors.toml: the previously generated gtk.css
+# is an output, not a source. omarchy-hook may run this hooklette a second
+# time without the theme-set wrapper, so generation has to be self-contained
+# and idempotent. The colors were validated by the library, and
+# publish_generated_file refuses to publish anything malformed, so the GTK
+# files can never end up with empty `#;` colors (which render windows
+# transparent on libadwaita).
+create_dynamic_theme
+publish_generated_file "$output_file" "$output_file.tmp"
+cp -f "$output_file" "$gtk3_file"
+cp -f "$output_file" "$gtk4_file"
+
+# Omarchy 4.5 derives light/dark from colors.toml (`mode = "light"`) through
+# omarchy-theme-color; the legacy light.mode marker file still wins if present.
 if [ -f "$light_file" ]; then
+    mode="light"
+elif command -v omarchy-theme-color >/dev/null 2>&1; then
+    mode=$(omarchy-theme-color --file "$colors_file" mode)
+else
+    mode="dark"
+fi
+
+if [ "$mode" = "light" ]; then
     gsettings set org.gnome.desktop.interface color-scheme "prefer-light"
     gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3-tmp
     gsettings set org.gnome.desktop.interface gtk-theme adw-gtk3

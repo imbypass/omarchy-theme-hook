@@ -1,8 +1,10 @@
 #!/bin/bash
 
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
 # Typora theme hook - generates CSS with current omarchy theme colors
 
-new_typora_file="$HOME/.config/omarchy/current/theme/typora.css"
+new_typora_file="$omarchy_theme_dir/typora.css"
 typora_dir="$HOME/.config/Typora/themes"
 
 create_dynamic_theme() {

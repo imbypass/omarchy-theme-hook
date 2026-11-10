@@ -20,7 +20,7 @@ The Omarchy Theme Hook is a lightweight, clean solution to extending your Omarch
 ## Installing
 You can install the theme hook by running the following command:
 ```
-curl -fsSL https://imbypass.github.io/omarchy-theme-hook/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/install.sh | bash
 ```
 
 ## Updating
@@ -53,7 +53,7 @@ You can access it via the terminal by running `thctl`.
 ## Uninstalling
 You can remove the theme hook by running the following command:
 ```
-curl -fsSL https://imbypass.github.io/omarchy-theme-hook/uninstall.sh | bash
+curl -fsSL https://raw.githubusercontent.com/imbypass/omarchy-theme-hook/main/uninstall.sh | bash
 ```
 
 ## FAQ
@@ -81,6 +81,10 @@ A Spotify client update may have caused Spicetify to stop working. You can fix t
 
 #### I get a "colors.toml not found" error!
 Omarchy 3.3+ requires themes to include `colors.toml`. Update your theme to a version compatible with Omarchy 3.3+, or add a valid `colors.toml` file to the theme directory.
+The hook looks for it in `~/.local/state/omarchy/current/theme` (Omarchy 4) and falls back to `~/.config/omarchy/current/theme` (Omarchy 3).
+
+#### I upgraded to Omarchy 4 and `thctl` is gone!
+The upgrade moves the old `~/.local/share/omarchy` tree aside, and `thctl` used to live in its `bin/`. Reinstall the hook to get `thctl` back; it is now installed to `~/.local/bin`, which survives Omarchy upgrades.
 
 #### What if I encounter issues?
 If you encounter any issues, please open an issue on the GitHub repository.

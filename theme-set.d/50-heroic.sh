@@ -1,6 +1,8 @@
 #!/bin/bash
 
-output_file="$HOME/.config/omarchy/current/theme/heroic.css"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/heroic.css"
 
 if ! command -v heroic >/dev/null 2>&1; then
     skipped "Heroic Launcher"

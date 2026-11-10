@@ -1,13 +1,16 @@
 #!/bin/bash
 
-output_file="$HOME/.config/omarchy/current/theme/vicinae.toml"
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/vicinae.toml"
 
 if ! command -v vicinae >/dev/null 2>&1; then
     skipped "Vicinae"
 fi
 
-if [ ! -f "$output_file" ]; then
-cat > "$output_file" << EOF
+# Regenerate on every run from colors.toml: the previously generated file is
+# an output, not a source.
+cat > "$output_file.tmp" << EOF
 [meta]
 version = 1
 name = "Omarchy"
@@ -41,7 +44,7 @@ red = "#${normal_red}"
 yellow = "#${bright_yellow}"
 cyan = "#${normal_cyan}"
 EOF
-fi
+publish_generated_file "$output_file" "$output_file.tmp"
 
 mkdir -p "$HOME/.local/share/vicinae/themes/"
 cp -p -f "$output_file" "$HOME/.local/share/vicinae/themes/omarchy.toml"

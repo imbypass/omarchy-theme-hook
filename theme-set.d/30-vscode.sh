@@ -1,12 +1,15 @@
 #!/bin/bash
-output_file="$HOME/.config/omarchy/current/theme/vscode_colors.json"
+
+source "${THEME_HOOK_LIB:-$HOME/.config/omarchy/hooks/theme-set.lib.sh}"
+
+output_file="$omarchy_theme_dir/vscode_colors.json"
 
 if ! command -v code >/dev/null 2>&1; then
     skipped "VS Code"
 fi
 
 # check current theme for vscode.json
-if [[ -f "$HOME/.config/omarchy/current/theme/vscode.json" ]]; then
+if [[ -f "$omarchy_theme_dir/vscode.json" ]]; then
     exit 0
 fi
 

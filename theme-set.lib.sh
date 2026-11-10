@@ -93,8 +93,23 @@ require_restart() {
 
 # Read every color in a single pass; each hooklette runs in its own process and
 # would otherwise spawn an awk per color.
+#
+# Two generations of colors.toml exist: themes from the Omarchy 4.5+ gallery
+# use named keys (red, green, cyan, ...), while Omarchy <= 4.4 themes and git
+# themes use the legacy 16-color block (color0..color15). Read both, then
+# resolve each slot from the named key with the legacy key as fallback.
 load_theme_colors() {
     local key hex
+
+    # Discard values from a previous load when the library is re-sourced.
+    unset primary_foreground primary_background cursor_color \
+        selection_foreground selection_background \
+        c_red c_green c_yellow c_blue c_magenta c_cyan \
+        c_dark_foreground c_bright_foreground \
+        c_bright_red c_bright_green c_bright_yellow c_bright_blue c_bright_magenta c_bright_cyan \
+        x_black x_red x_green x_yellow x_blue x_magenta x_cyan x_white \
+        x_bright_black x_bright_red x_bright_green x_bright_yellow x_bright_blue x_bright_magenta x_bright_cyan
+
     while IFS='=' read -r key hex; do
         case "$key" in
             foreground) primary_foreground=$hex ;;
@@ -102,28 +117,64 @@ load_theme_colors() {
             cursor) cursor_color=$hex ;;
             selection_foreground) selection_foreground=$hex ;;
             selection_background) selection_background=$hex ;;
-            color0) normal_black=$hex ;;
-            color1) normal_red=$hex ;;
-            color2) normal_green=$hex ;;
-            color3) normal_yellow=$hex ;;
-            color4) normal_blue=$hex ;;
-            color5) normal_magenta=$hex ;;
-            color6) normal_cyan=$hex ;;
-            color7) normal_white=$hex ;;
-            color8) bright_black=$hex ;;
-            color9) bright_red=$hex ;;
-            color10) bright_green=$hex ;;
-            color11) bright_yellow=$hex ;;
-            color12) bright_blue=$hex ;;
-            color13) bright_magenta=$hex ;;
-            color14) bright_cyan=$hex ;;
-            color15) bright_white=$hex ;;
+            # Omarchy 4.5+ named keys
+            red) c_red=$hex ;;
+            green) c_green=$hex ;;
+            yellow) c_yellow=$hex ;;
+            blue) c_blue=$hex ;;
+            magenta) c_magenta=$hex ;;
+            cyan) c_cyan=$hex ;;
+            dark_foreground) c_dark_foreground=$hex ;;
+            bright_foreground) c_bright_foreground=$hex ;;
+            bright_red) c_bright_red=$hex ;;
+            bright_green) c_bright_green=$hex ;;
+            bright_yellow) c_bright_yellow=$hex ;;
+            bright_blue) c_bright_blue=$hex ;;
+            bright_magenta) c_bright_magenta=$hex ;;
+            bright_cyan) c_bright_cyan=$hex ;;
+            # Legacy 16-color keys
+            color0) x_black=$hex ;;
+            color1) x_red=$hex ;;
+            color2) x_green=$hex ;;
+            color3) x_yellow=$hex ;;
+            color4) x_blue=$hex ;;
+            color5) x_magenta=$hex ;;
+            color6) x_cyan=$hex ;;
+            color7) x_white=$hex ;;
+            color8) x_bright_black=$hex ;;
+            color9) x_bright_red=$hex ;;
+            color10) x_bright_green=$hex ;;
+            color11) x_bright_yellow=$hex ;;
+            color12) x_bright_blue=$hex ;;
+            color13) x_bright_magenta=$hex ;;
+            color14) x_bright_cyan=$hex ;;
+            color15) x_bright_white=$hex ;;
         esac
     done < <(awk '
         /=/ && match($0, /#[0-9a-fA-F]{6}/) && seen[$1]++ == 0 {
             print $1 "=" substr($0, RSTART + 1, 6)
         }
     ' "$colors_file")
+
+    # Resolve each slot: named key first, legacy key as fallback. The last
+    # resort maps black to the background and white to the foreground, the way
+    # base16 themes treat them.
+    normal_red=${c_red:-${x_red:-}}
+    normal_green=${c_green:-${x_green:-}}
+    normal_yellow=${c_yellow:-${x_yellow:-}}
+    normal_blue=${c_blue:-${x_blue:-}}
+    normal_magenta=${c_magenta:-${x_magenta:-}}
+    normal_cyan=${c_cyan:-${x_cyan:-}}
+    normal_black=${x_black:-$primary_background}
+    normal_white=${x_white:-${c_bright_foreground:-$primary_foreground}}
+    bright_black=${x_bright_black:-${c_dark_foreground:-$normal_black}}
+    bright_red=${c_bright_red:-${x_bright_red:-$normal_red}}
+    bright_green=${c_bright_green:-${x_bright_green:-$normal_green}}
+    bright_yellow=${c_bright_yellow:-${x_bright_yellow:-$normal_yellow}}
+    bright_blue=${c_bright_blue:-${x_bright_blue:-$normal_blue}}
+    bright_magenta=${c_bright_magenta:-${x_bright_magenta:-$normal_magenta}}
+    bright_cyan=${c_bright_cyan:-${x_bright_cyan:-$normal_cyan}}
+    bright_white=${x_bright_white:-${c_bright_foreground:-$primary_foreground}}
 
     local missing=()
     local name
@@ -136,7 +187,7 @@ load_theme_colors() {
     done
 
     if ((${#missing[@]} > 0)); then
-        error "No color found for ${missing[*]} in $colors_file. Ensure your theme is compatible with Omarchy 3.3+."
+        error "No color found for ${missing[*]} in $colors_file. Ensure your theme defines its palette (named keys or color0..color15)."
     fi
 
     # Optional keys fall back to the primary colors, as themes may omit them.
@@ -162,6 +213,25 @@ load_theme_colors() {
     rgb_bright_magenta=$(hex2rgb "$bright_magenta")
     rgb_bright_cyan=$(hex2rgb "$bright_cyan")
     rgb_bright_white=$(hex2rgb "$bright_white")
+}
+
+# The generated file of a hooklette is an output, not a source: regenerate it
+# from colors.toml on every run. Write to a temporary file and validate before
+# publishing, so a failure (or an interrupted run) leaves the previous good
+# file in place instead of a half-written or empty-color one.
+publish_generated_file() {
+    local target=$1 tmp=$2 invalid
+
+    # Every @define-color statement must resolve: a 6-digit hex value, another
+    # color name, or alpha() of one; anything else means an unresolved
+    # variable slipped in.
+    invalid=$(grep -E '^[[:space:]]*@define-color' "$tmp" | grep -vE '#[0-9a-fA-F]{6};|@[a-zA-Z_]+;|alpha\([^)]*\);')
+    if [[ -n $invalid ]] || grep -q '#;' "$tmp"; then
+        error "Generated file $target contains invalid colors, keeping the existing one. Offending lines: ${invalid//$'\n'/ | }"
+    fi
+
+    [[ -f $target ]] || touch "$target"
+    mv -f "$tmp" "$target"
 }
 
 load_theme_colors
